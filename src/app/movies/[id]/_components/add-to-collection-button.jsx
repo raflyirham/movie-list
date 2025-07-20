@@ -17,7 +17,6 @@ export default function AddToCollectionButton() {
   const openModal = useModalStore((state) => state.openModal);
 
   const handleAddToCollection = () => {
-    // openModal("create-collection");
     openModal("add-to-collection");
   };
 
