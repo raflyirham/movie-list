@@ -14,10 +14,11 @@ import useModalStore from "@/stores/useModalStore";
 
 export default function AddToCollectionButton() {
   const { user, isLoading } = useAuth();
-  const { openModal } = useModalStore();
+  const openModal = useModalStore((state) => state.openModal);
 
   const handleAddToCollection = () => {
-    openModal("create-collection");
+    // openModal("create-collection");
+    openModal("add-to-collection");
   };
 
   if (isLoading) return <Skeleton className="bg-primary/50 w-full h-10" />;

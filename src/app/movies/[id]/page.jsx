@@ -1,9 +1,13 @@
+"use client";
+
 import { getDoc, collection, doc } from "firebase/firestore";
 import getFirebaseConfig from "@/firebase/config";
 import Image from "next/image";
 import AddToCollectionButton from "./_components/add-to-collection-button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import useMovieStore from "@/stores/useMovieStore";
+import { useEffect } from "react";
 
 // TODO: Remove this
 const mockData = {
@@ -12,12 +16,28 @@ const mockData = {
 
 export default function MovieDetailPage() {
   const { db } = getFirebaseConfig();
+  const setMovie = useMovieStore((state) => state.setMovie);
 
   const getMovie = async (id) => {
     const movieCollection = collection(db, "movies");
     const movieDoc = await getDoc(doc(movieCollection, id));
     return movieDoc.data();
   };
+
+  useEffect(() => {
+    setMovie({
+      id: "1",
+      title: "Stranger Things",
+      description:
+        "A group of friends in a small town discover a strange girl with supernatural powers.",
+      imageUrl:
+        "https://cdn.theatlantic.com/thumbor/TvBfu0CaY_Em1tIGSXZyfKt7HFI=/426x167:7076x3908/1600x900/media/img/mt/2017/10/downloadAsset/original.jpg",
+      duration: 60,
+      releaseYear: 2016,
+      rating: 8.5,
+      genres: ["Fantasy", "Horror", "Sci-Fi"],
+    });
+  }, []);
 
   return (
     <div className="flex flex-col rounded-md shadow-md">
