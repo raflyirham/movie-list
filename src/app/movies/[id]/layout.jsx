@@ -3,5 +3,5 @@ export const metadata = {
 };
 
 export default function MovieDetailLayout({ children }) {
-  return <div>{children}</div>;
+  return <div className="px-32 py-32">{children}</div>;
 }
