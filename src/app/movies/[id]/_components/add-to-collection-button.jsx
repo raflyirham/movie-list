@@ -10,9 +10,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import useModalStore from "@/stores/useModalStore";
 
 export default function AddToCollectionButton() {
   const { user, isLoading } = useAuth();
+  const { openModal } = useModalStore();
+
+  const handleAddToCollection = () => {
+    openModal("create-collection");
+  };
 
   if (isLoading) return <Skeleton className="bg-primary/50 w-full h-10" />;
 
@@ -35,7 +41,7 @@ export default function AddToCollectionButton() {
   }
 
   return (
-    <Button>
+    <Button onClick={handleAddToCollection}>
       <Layers />
       Add to collection
     </Button>
