@@ -17,6 +17,8 @@ import {
   getDocs,
   doc,
   getDoc,
+  arrayUnion,
+  updateDoc,
 } from "firebase/firestore";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -39,6 +41,8 @@ export default function AddToCollectionModal() {
   const [isLoadingCollections, setIsLoadingCollections] = useState(true);
   const [movieCollections, setMovieCollections] = useState([]);
   const [selectedMovieCollections, setSelectedMovieCollections] = useState([]);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getMovie = async (movieId) => {
     try {
@@ -127,8 +131,37 @@ export default function AddToCollectionModal() {
   const isSubmitButtonDisabled = anyTruthy(
     selectedMovieCollections.length === 0,
     isLoadingCollections,
-    isLoading
+    isLoading,
+    isSubmitting
   );
+
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+
+      Promise.all(
+        selectedMovieCollections.map(async (collection) => {
+          const collectionRef = doc(
+            db,
+            "users",
+            user.uid,
+            "collections",
+            collection.id
+          );
+          await updateDoc(collectionRef, {
+            movies: arrayUnion(movieId),
+          });
+        })
+      );
+
+      toast.success("Movie added to collections successfully");
+      closeModal();
+    } catch {
+      toast.error("Failed to add movie to collection");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     if (user) {
@@ -172,7 +205,7 @@ export default function AddToCollectionModal() {
         <DialogHeader>
           <DialogTitle>Add to Collection</DialogTitle>
           <DialogDescription>
-            Add this movie to your collection
+            Select one or more collections to add this movie to.
           </DialogDescription>
         </DialogHeader>
 
@@ -224,7 +257,9 @@ export default function AddToCollectionModal() {
           <DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogClose>
-          <Button disabled={isSubmitButtonDisabled}>Add to Collection</Button>
+          <Button disabled={isSubmitButtonDisabled} onClick={handleSubmit}>
+            {isSubmitting ? "Adding..." : "Add to Collection"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
