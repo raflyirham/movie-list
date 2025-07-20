@@ -1,6 +1,3 @@
-"use client";
-
-import { useParams } from "next/navigation";
 import { getDoc, collection, doc } from "firebase/firestore";
 import getFirebaseConfig from "@/firebase/config";
 import Image from "next/image";
@@ -14,10 +11,6 @@ const mockData = {
 };
 
 export default function MovieDetailPage() {
-  const params = useParams();
-
-  const { id } = params;
-
   const { db } = getFirebaseConfig();
 
   const getMovie = async (id) => {
