@@ -87,7 +87,7 @@ export default function AddToCollectionModal() {
             ...collection,
             movies,
             imageUrl: valueOrDefault(
-              movies?.[0]?.imageUrl,
+              movies?.[0]?.coverUrl,
               "/assets/images/placeholders/collection.png"
             ),
             isAlreadyInCollection: isAlreadyInCollection(collection),
