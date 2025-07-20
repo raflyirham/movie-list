@@ -13,11 +13,6 @@ import useMovieStore from "@/stores/useMovieStore";
 import { toast } from "sonner";
 import MovieDetailLoader from "./_components/loaders/movie-detail-loader";
 
-// TODO: Remove this
-const mockData = {
-  genres: ["Fantasy", "Horror", "Sci-Fi"],
-};
-
 export default function MovieDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,31 +30,21 @@ export default function MovieDetailPage() {
 
       const movieCollection = collection(db, "movies");
       const movieDoc = await getDoc(doc(movieCollection, movieId));
+
+      if (!movieDoc.exists()) {
+        notFound();
+      }
+
       setMovie({
         ...movieDoc.data(),
         id: movieDoc.id,
       });
     } catch {
-      toast.error("Failed to fetch movie");
+      toast.error("Failed to get movie details");
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    setMovie({
-      id: "1",
-      title: "Stranger Things",
-      description:
-        "A group of friends in a small town discover a strange girl with supernatural powers.",
-      imageUrl:
-        "https://cdn.theatlantic.com/thumbor/TvBfu0CaY_Em1tIGSXZyfKt7HFI=/426x167:7076x3908/1600x900/media/img/mt/2017/10/downloadAsset/original.jpg",
-      duration: 60,
-      releaseYear: 2016,
-      rating: 8.5,
-      genres: ["Fantasy", "Horror", "Sci-Fi"],
-    });
-  }, []);
 
   useEffect(() => {
     getMovie();
