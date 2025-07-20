@@ -26,7 +26,7 @@ import getFirebaseConfig from "@/firebase/config";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { allTruthy, anyTruthy, cn, valueOrDefault } from "@/lib/utils";
-import { CheckCircle2Icon } from "lucide-react";
+import { CheckCircle2Icon, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import useMovieStore from "@/stores/useMovieStore";
@@ -203,10 +203,22 @@ export default function AddToCollectionModal() {
     <Dialog open onOpenChange={closeModal}>
       <DialogContent showCloseButton={false} className="min-w-[800px]">
         <DialogHeader>
-          <DialogTitle>Add to Collection</DialogTitle>
-          <DialogDescription>
-            Select one or more collections to add this movie to.
-          </DialogDescription>
+          <div className="flex flex-row justify-between items-center gap-10">
+            <div className="flex flex-col gap-2">
+              <DialogTitle>Add to Collection</DialogTitle>
+              <DialogDescription>
+                Select one or more collections to add this movie to. You can't
+                add a movie to a collection if it's already in one.
+              </DialogDescription>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => openModal("create-collection")}
+            >
+              <Plus />
+              Create Collection
+            </Button>
+          </div>
         </DialogHeader>
 
         <p className="text-sm text-muted-foreground">
