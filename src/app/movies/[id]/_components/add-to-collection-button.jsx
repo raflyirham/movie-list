@@ -12,13 +12,21 @@ import {
 } from "@/components/ui/tooltip";
 import useModalStore from "@/stores/useModalStore";
 
-export default function AddToCollectionButton() {
+export default function AddToCollectionButton({ type = "single" }) {
   const { user, isLoading } = useAuth();
   const openModal = useModalStore((state) => state.openModal);
 
   const handleAddToCollection = () => {
-    openModal("add-to-collection");
-    console.log(user);
+    switch (type) {
+      case "single":
+        openModal("add-to-collection");
+        break;
+      case "bulk":
+        openModal("add-to-collection-bulk");
+        break;
+      default:
+        break;
+    }
   };
 
   if (isLoading) return <Skeleton className="bg-primary/50 w-full h-10" />;
