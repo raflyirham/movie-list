@@ -117,7 +117,7 @@ export default function MovieList() {
           className="w-full sm:w-[40%] lg:w-1/4 p-2 rounded-lg shadow-md bg-white"
         />
 
-        <AddToCollectionButton />
+        <AddToCollectionButton type="bulk"/>
       </div>
 
       <div className="w-full p-4 mx-auto mt-7 bg-white">

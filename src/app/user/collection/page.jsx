@@ -2,10 +2,24 @@
 
 import ListCollection from './listCollection'
 import AddCollection from './addCollection'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import useAuth from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 export default function CollectionPage() {
-  const [openAdd, setOpenAdd] = useState(false)
+  const [openAdd, setOpenAdd] = useState(false);
+  const router = useRouter();
+  const {role} = useAuth();
+
+  const redirect = () => {
+    if(role==="admin"){
+      router.push("/");
+    }
+  }
+
+  useEffect(()=>{
+    redirect();
+  }, [role]);
 
   return (
     <div className="p-6">

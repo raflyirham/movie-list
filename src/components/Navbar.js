@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import getFirebaseConfig from "@/firebase/config";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 
 const Navbar = ({user}) => {
@@ -15,8 +16,14 @@ const Navbar = ({user}) => {
     const router = useRouter();
 
     const handleLogout = async () => {
-        await signOut(auth);
-        router.push("/");
+        try {
+            await signOut(auth);
+            toast.success("You have been logged out.");
+            router.push("/login");
+        } catch (error) {
+            console.error("Failed to log out:", error);
+            toast.error("Failed to log out. Please try again.");
+        }
     }
 
     return(
