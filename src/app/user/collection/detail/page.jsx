@@ -4,23 +4,29 @@ import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { doc, getDoc } from 'firebase/firestore'
 import getFirebaseConfig from '@/firebase/config'
+import useAuth from '@/hooks/useAuth'
 import Link from 'next/link'
 import EditName from './EditName'
 import RemoveMovie from './RemoveMovie'
-import AddCollection from '../addCollection' // menggunakan komponen yang sama
+import AddCollection from '../addCollection'
 
 export default function CollectionDetailPage() {
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
+  const { db } = getFirebaseConfig()
+  const { user } = useAuth()
+  const userId = user?.uid
+
   const [collection, setCollection] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [openAdd, setOpenAdd] = useState(false) // state untuk modal add collection
-  const { db } = getFirebaseConfig()
+  const [openAdd, setOpenAdd] = useState(false)
 
   useEffect(() => {
     const fetchCollection = async () => {
+      if (!userId || !id) return
+
       try {
-        const ref = doc(db, 'collections', id)
+        const ref = doc(db, 'users', userId, 'colection', id)
         const snapshot = await getDoc(ref)
         if (snapshot.exists()) {
           setCollection({ id: snapshot.id, ...snapshot.data() })
@@ -34,9 +40,10 @@ export default function CollectionDetailPage() {
       }
     }
 
-    if (id) fetchCollection()
-  }, [id, db])
+    fetchCollection()
+  }, [id, db, userId])
 
+  if (!userId) return <p className="p-6">Loading user...</p>
   if (loading) return <p className="p-6">Loading...</p>
   if (!collection) return <p className="p-6">Collection not found.</p>
 
@@ -51,8 +58,6 @@ export default function CollectionDetailPage() {
               ← Back to Collections
             </button>
           </Link>
-
-          {/* Tombol Add Collection membuka modal */}
           <button
             onClick={() => setOpenAdd(true)}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -62,7 +67,7 @@ export default function CollectionDetailPage() {
         </div>
       </div>
 
-      {/* Modal Add Collection (reusable) */}
+      {/* Modal Add Collection */}
       <AddCollection open={openAdd} setOpen={setOpenAdd} />
 
       {/* Edit Collection Name */}
@@ -72,7 +77,6 @@ export default function CollectionDetailPage() {
         Total movies: {collection.movies?.length || 0}
       </p>
 
-      {/* Movie Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {collection.movies?.length > 0 ? (
           collection.movies.map((movieId, index) => (
@@ -88,7 +92,7 @@ export default function CollectionDetailPage() {
               </Link>
               <RemoveMovie
                 movieId={movieId}
-                collection={collection}
+                collectionId={collection.id}
                 setCollection={setCollection}
               />
             </div>
