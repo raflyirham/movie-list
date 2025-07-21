@@ -8,7 +8,7 @@ export default function MovieDetailLayout({ children }) {
   return (
     <>
       <div className="px-8 lg:px-32 py-8 lg:py-32">{children}</div>
-      <MoviesModals />
+      {/* <MoviesModals /> */}
     </>
   );
 }

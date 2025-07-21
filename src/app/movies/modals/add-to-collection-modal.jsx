@@ -62,6 +62,7 @@ export default function AddToCollectionModal() {
   const getCollections = async () => {
     try {
       setIsLoadingCollections(true);
+      console.log("User " + user.uid);
       const userCollectionsRef = collection(
         db,
         "users",

@@ -5,6 +5,7 @@ import getFirebaseConfig from "@/firebase/config";
 import Image from "next/image";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
+import AddToCollectionButton from "./[id]/_components/add-to-collection-button";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -100,6 +101,8 @@ export default function MovieList() {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full sm:w-[40%] lg:w-1/4 p-2 rounded-lg shadow-md bg-white"
         />
+
+        <AddToCollectionButton />
       </div>
 
       <div className="w-full p-4 mx-auto mt-7 bg-white">

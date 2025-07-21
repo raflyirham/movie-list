@@ -41,8 +41,7 @@ const Navbar = ({user}) => {
                     </button>
                     <div className="hidden sm:flex gap-x-5 items-center">
                         <Link href="/" className="text-white text-sm md:text-lg font-semibold hover:text-yellow-300">Home</Link>
-                        <Link href="/user/movieList" className="text-white text-sm md:text-lg font-semibold hover:text-yellow-300">Movies</Link>
-                        <Link href="/" className="text-white text-sm md:text-lg font-semibold hover:text-yellow-300">My Collection</Link>
+                        <Link href="/user/collection" className="text-white text-sm md:text-lg font-semibold hover:text-yellow-300">My Collection</Link>
                         {(!user)? 
                             <div className="bg-green-500 text-white text-center font-bold py-2 px-4 rounded-lg hover:bg-green-600"><Link href="/login">Login</Link></div>:
                             <>
@@ -56,8 +55,7 @@ const Navbar = ({user}) => {
                 <div className={`left-0 w-full transition-all delay-150 duration-700 ease-in-out overflow-hidden bg-blue-900 flex flex-col items-center rounded-b-lg sm:hidden gap-y-3 ${menuOpen ? 'max-h-64 opacity-100 py-3' : 'max-h-0 opacity-0'}`}>
                     <hr className="w-full h-1" />
                     <Link href="/" onClick={() => setMenuOpen(false)} className="text-white font-semibold hover:text-yellow-300">Home</Link>
-                    <Link href="/user/movieList" onClick={() => setMenuOpen(false)} className="text-white font-semibold hover:text-yellow-300">Movies</Link>
-                    <Link href="/" onClick={() => setMenuOpen(false)} className="text-white font-semibold hover:text-yellow-300">My Collection</Link>
+                    <Link href="/user/collection" onClick={() => setMenuOpen(false)} className="text-white font-semibold hover:text-yellow-300">My Collection</Link>
                     {(!user)? 
                         <div className="bg-green-500 text-white text-center font-bold py-2 px-4 rounded-lg hover:bg-green-600"><Link href="/login">Login</Link></div>:
                         <>
