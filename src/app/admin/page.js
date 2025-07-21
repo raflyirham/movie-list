@@ -9,10 +9,8 @@ import { LogoutButton } from "./_components/logout-button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
-import { LogoutButton } from "./_components/logout-button";
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-
 
 export default function AdminPage() {
   const [movies, setMovies] = useState([]);
@@ -23,18 +21,17 @@ export default function AdminPage() {
   const [sortOrder, setSortOrder] = useState("asc");
 
   const router = useRouter();
-  const {role} = useAuth();
+  const { role } = useAuth();
 
   const redirect = () => {
-    if(role==="user"){
+    if (role === "user") {
       router.push("/");
     }
-  }
+  };
 
-  useEffect(()=>{
+  useEffect(() => {
     redirect();
   }, [role]);
-
 
   useEffect(() => {
     async function getMovies() {
@@ -64,8 +61,8 @@ export default function AdminPage() {
       .sort((a, b) => {
         const aValue = a[sortBy];
         const bValue = b[sortBy];
-        if (aValue < bValue) return sortOrder === 'asc' ? -1 : 1;
-        if (aValue > bValue) return sortOrder === 'asc' ? 1 : -1;
+        if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
+        if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
         return 0;
       });
   }, [searchQuery, movies, sortBy, sortOrder]);
@@ -96,17 +93,17 @@ export default function AdminPage() {
           />
         </div>
       </div>
-      
+
       <div className="space-y-4">
         {isLoading ? (
-            <p className="text-center">Loading movies...</p>
+          <p className="text-center">Loading movies...</p>
         ) : (
-            <MoviesTable 
-                movies={filteredAndSortedMovies} 
-                sortBy={sortBy}
-                sortOrder={sortOrder}
-                onSort={handleSort}
-            />
+          <MoviesTable
+            movies={filteredAndSortedMovies}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onSort={handleSort}
+          />
         )}
       </div>
     </main>
