@@ -81,6 +81,7 @@ export default function CreateCollectionModal() {
 
       toast.success("Collection created successfully");
       setCollectionName("");
+      closeModal();
     } catch (error) {
       console.error(error);
     } finally {
