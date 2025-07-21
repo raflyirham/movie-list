@@ -5,7 +5,6 @@ import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import getFirebaseConfig from "@/firebase/config";
 import { AddMovieForm } from "./_components/add-movie-form";
 import { MoviesTable } from "./_components/movies-table";
-import { LogoutButton } from "./_components/logout-button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
