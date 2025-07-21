@@ -31,14 +31,25 @@ export default function CreateCollectionModal() {
   const [error, setError] = useState("");
 
   const handleSubmit = async () => {
-    if (!collectionName) {
+    setError("");
+
+    if (!collectionName || collectionName.trim() === "") {
       setError("Collection name is required");
       return;
     }
-    setError("");
+
+    const isNameValid = /^[a-zA-Z0-9\s]+$/.test(collectionName);
+
+    if (!isNameValid) {
+      setError("Collection name must contain only letters and numbers");
+      toast.error("Collection name must contain only letters and numbers");
+      setCollectionName("");
+      return;
+    }
 
     try {
       setIsSubmitting(true);
+
       const userCollectionsRef = collection(
         db,
         "users",
