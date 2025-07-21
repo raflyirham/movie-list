@@ -7,12 +7,14 @@ import getFirebaseConfig from '@/firebase/config'
 import Link from 'next/link'
 import EditName from './EditName'
 import RemoveMovie from './RemoveMovie'
+import AddCollection from '../addCollection' // menggunakan komponen yang sama
 
 export default function CollectionDetailPage() {
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
   const [collection, setCollection] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [openAdd, setOpenAdd] = useState(false) // state untuk modal add collection
   const { db } = getFirebaseConfig()
 
   useEffect(() => {
@@ -44,21 +46,24 @@ export default function CollectionDetailPage() {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">{collection.name}</h1>
         <div className="flex gap-2">
-          {/* Tombol kembali ke list */}
           <Link href="/user/collection">
             <button className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
               ← Back to Collections
             </button>
           </Link>
 
-          {/* Tombol Add Collection (hanya navigasi) */}
-          <Link href="/user/collection">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-              + Add New Collection
-            </button>
-          </Link>
+          {/* Tombol Add Collection membuka modal */}
+          <button
+            onClick={() => setOpenAdd(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          >
+            + Add New Collection
+          </button>
         </div>
       </div>
+
+      {/* Modal Add Collection (reusable) */}
+      <AddCollection open={openAdd} setOpen={setOpenAdd} />
 
       {/* Edit Collection Name */}
       <EditName collection={collection} setCollection={setCollection} />
@@ -72,7 +77,6 @@ export default function CollectionDetailPage() {
         {collection.movies?.length > 0 ? (
           collection.movies.map((movieId, index) => (
             <div key={index} className="relative group">
-              {/* Movie image as link to detail */}
               <Link href={`/user/movie/detail?id=${movieId}`}>
                 <div className="hover:opacity-80 transition cursor-pointer">
                   <img
@@ -82,8 +86,6 @@ export default function CollectionDetailPage() {
                   />
                 </div>
               </Link>
-
-              {/* Tombol Remove */}
               <RemoveMovie
                 movieId={movieId}
                 collection={collection}
