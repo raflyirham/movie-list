@@ -15,9 +15,12 @@ import useAuth from '@/hooks/useAuth'
 import Link from 'next/link'
 import EditCollection from './editCollection'
 import AddCollection from './addCollection'
+import { Plus } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import useModalStore from '@/stores/useModalStore'
 
 export default function ListCollection() {
-
+  const { closeModal, openModal } = useModalStore();
   const { user } = useAuth();
 
   const [collections, setCollections] = useState([])
@@ -76,12 +79,13 @@ export default function ListCollection() {
     <>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">My Collections</h1>
-        <button
-          onClick={() => setOpenAdd(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          + Add Collection
-        </button>
+        <Button
+              variant="outline"
+              onClick={() => openModal("create-collection")}
+            >
+              <Plus />
+              Create Collection
+            </Button>
       </div>
 
       <AddCollection open={openAdd} setOpen={setOpenAdd} />
