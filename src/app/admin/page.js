@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import getFirebaseConfig from "@/firebase/config";
 import { AddMovieForm } from "./_components/add-movie-form";
 import { MoviesTable } from "./_components/movies-table";
