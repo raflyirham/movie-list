@@ -20,6 +20,7 @@ export default function useAuth() {
         const userDoc = await getDoc(doc(userCollection, user.uid));
         setRole(userDoc.data()?.role || "");
         setUser(userDoc.data());
+        console.log(role);
       }
 
       setIsLoading(false);
