@@ -20,6 +20,7 @@ import useAuth from "@/hooks/useAuth";
 import getFirebaseConfig from "@/firebase/config";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { toast } from "sonner";
+import { anyTruthy } from "@/lib/utils";
 
 export default function CreateCollectionModal() {
   const { user, isLoading } = useAuth();
@@ -87,6 +88,12 @@ export default function CreateCollectionModal() {
     }
   };
 
+  const isSubmitButtonDisabled = anyTruthy(
+    isSubmitting,
+    isLoading,
+    !collectionName || collectionName.trim() === ""
+  );
+
   return (
     <Dialog open onOpenChange={closeModal}>
       <DialogContent showCloseButton={false}>
@@ -97,7 +104,10 @@ export default function CreateCollectionModal() {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4 mt-4">
+        <div
+          className="flex flex-col gap-4 mt-4"
+          data-testid="create-collection-modal-input"
+        >
           <div className="flex flex-col gap-3">
             <Label htmlFor="collection-name">Collection Name:</Label>
             <Input
@@ -108,6 +118,7 @@ export default function CreateCollectionModal() {
               name="collectionName"
               value={collectionName}
               onChange={(e) => setCollectionName(e.target.value)}
+              data-testid="create-collection-modal-input-collection-name"
             />
             {error && <p className="text-sm text-red-500">{error}</p>}
           </div>
@@ -119,8 +130,9 @@ export default function CreateCollectionModal() {
           </DialogClose>
           <Button
             type="submit"
-            disabled={isSubmitting || isLoading}
+            disabled={isSubmitButtonDisabled}
             onClick={handleSubmit}
+            data-testid="create-collection-modal-submit"
           >
             {isSubmitting ? "Creating..." : "Create Collection"}
           </Button>
