@@ -85,7 +85,10 @@ export default function MovieDetailPage() {
               quality={100}
             />
           </div>
-          <AddToCollectionButton />
+
+          <div className="flex justify-center items-center w-full">
+            <AddToCollectionButton />
+          </div>
 
           <div className="flex flex-row lg:flex-col gap-4 mt-4">
             <p className="text-sm text-secondary-foreground">
