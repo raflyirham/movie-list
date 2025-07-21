@@ -18,6 +18,7 @@ export default function AddToCollectionButton() {
 
   const handleAddToCollection = () => {
     openModal("add-to-collection");
+    console.log(user);
   };
 
   if (isLoading) return <Skeleton className="bg-primary/50 w-full h-10" />;

@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import CreateCollectionModal from "./modals/create-collection-modal";
+import CreateCollectionModal from "../../modals/create-collection-modal";
 import useModalStore from "@/stores/useModalStore";
-import AddToCollectionModal from "./modals/add-to-collection-modal";
+import AddToCollectionModal from "../../modals/add-to-collection-modal";
 
 export default function MoviesModals() {
   const { currentModal } = useModalStore();
