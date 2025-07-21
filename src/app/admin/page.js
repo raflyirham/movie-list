@@ -10,6 +10,7 @@ import { Search } from "lucide-react";
 
 import useAuth from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
+import { LogoutButton } from "./_components/logout-button";
 
 export default function AdminPage() {
   const [movies, setMovies] = useState([]);
