@@ -13,7 +13,6 @@ export default function useAuth() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currUser) => {
-      // setUser(user);
 
       if (currUser) {
         const userCollection = collection(db, "users");

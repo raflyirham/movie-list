@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation"
 import getFirebaseConfig from "@/firebase/config"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { ErrorText } from "@/components/error-text"
+import { toast } from "sonner"
 
 export default function LoginPage() {
 
@@ -58,7 +59,7 @@ export default function LoginPage() {
     else {
       const {auth} = getFirebaseConfig();
       signInWithEmailAndPassword(auth, form.email, form.password).then(()=>{
-        alert("Login successful!");
+        toast.success("Successfully logged in!");
         router.push("/");
       }).catch((error)=>{
         console.log(error);

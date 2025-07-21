@@ -6,6 +6,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import AddToCollectionButton from "./[id]/_components/add-to-collection-button";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import NotFound from "../not-found";
+import useSelectedMoviesStore from "./[id]/_components/useSelectedMoviesStore";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -16,6 +20,19 @@ export default function MovieList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("title-asc");
   const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
+  const {role} = useAuth();
+  const { selectedMovies, toggleMovie } = useSelectedMoviesStore();
+
+  const redirect = () => {
+    if(role==="admin"){
+      router.push("/");
+    }
+  }
+
+  useEffect(()=>{
+    redirect();
+  }, [role]);
 
   useEffect(() => {
     let interval;
@@ -102,7 +119,7 @@ export default function MovieList() {
           className="w-full sm:w-[40%] lg:w-1/4 p-2 rounded-lg shadow-md bg-white"
         />
 
-        <AddToCollectionButton />
+        <AddToCollectionButton type="bulk" />
       </div>
 
       <div className="w-full p-4 mx-auto mt-7 bg-white">
@@ -115,34 +132,47 @@ export default function MovieList() {
           ) : paginatedMovies.length === 0 ? (
             <p className="my-20 text-center font-semibold text-2xl text-black">No movies found.</p>
           ) : (
-            paginatedMovies.map((movie) => (
-              <div
-                key={movie.id}
-                className="group relative w-[250px] h-[350px] shadow-sm rounded-xl overflow-hidden transform transition duration-500 hover:-translate-y-2 hover:scale-105"
-              >
-                <Image src={movie.coverUrl} alt={movie.title} fill sizes="100vw" className="object-cover" />
-                <div className="absolute top-0 left-0 opacity-100 lg:opacity-0 group-hover:opacity-100 transition duration-300 z-10">
-                  <span className="p-2 flex gap-x-2 text-white text-center items-center">
-                    <Image src="/star-icon.png" alt="star icon" width={22} height={20} />
-                    {movie.rating}
-                  </span>
+            paginatedMovies.map((movie) => {
+              const isSelected = selectedMovies.includes(movie.id);
+
+              return(
+
+                <div
+                  key={movie.id}
+                  className="group relative w-[250px] h-[350px] shadow-sm rounded-xl overflow-hidden transform transition duration-500 hover:-translate-y-2 hover:scale-105"
+                >
+                  <Image src={movie.coverUrl} alt={movie.title} fill sizes="100vw" className="object-cover" />
+                  <div className="absolute top-0 left-0 opacity-100 lg:opacity-0 group-hover:opacity-100 transition duration-300 z-10">
+                    <span className="p-2 flex gap-x-2 text-white text-center items-center">
+                      <Image src="/star-icon.png" alt="star icon" width={22} height={20} />
+                      {movie.rating}
+                    </span>
+                  </div>
+                  <div className="absolute top-0 right-0 opacity-100 lg:opacity-0 group-hover:opacity-100 transition duration-300 z-10">
+                    <span className="p-2 flex gap-x-1 text-white text-center">
+                      <Image src="/clock-icon.png" alt="clock icon" width={22} height={20} />
+                      {formatDuration(movie.duration)}
+                    </span>
+                  </div>
+                  <div className="absolute inset-0 bg-black/40 opacity-100 lg:opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                  <div className="absolute inset-0 flex flex-col gap-y-4 items-center justify-center opacity-100 lg:opacity-0 group-hover:opacity-100 transition duration-300 z-10">
+                    <Link href={`/movies/${movie.id}`} className="p-2 font-medium rounded-lg bg-white hover:bg-[#B8BBB8]">View Detail</Link>
+                    <button
+                      onClick={() => toggleMovie(movie.id)}
+                      className={`p-2 rounded-lg text-white transition ${
+                        isSelected ? "bg-gray-500 hover:bg-gray-600" : "bg-green-500 hover:bg-green-600"
+                      }`}
+                    >
+                      {isSelected ? "Added" : "Add to Collection"}
+                    </button>
+
+                  </div>
+                  <h4 className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-center font-medium line-clamp-2 text-lg overflow-hidden transition duration-300 opacity-100 lg:opacity-0 group-hover:opacity-100 px-4 z-10">
+                    {movie.title}
+                  </h4>
                 </div>
-                <div className="absolute top-0 right-0 opacity-100 lg:opacity-0 group-hover:opacity-100 transition duration-300 z-10">
-                  <span className="p-2 flex gap-x-1 text-white text-center">
-                    <Image src="/clock-icon.png" alt="clock icon" width={22} height={20} />
-                    {formatDuration(movie.duration)}
-                  </span>
-                </div>
-                <div className="absolute inset-0 bg-black/40 opacity-100 lg:opacity-0 group-hover:opacity-100 transition duration-300"></div>
-                <div className="absolute inset-0 flex flex-col gap-y-4 items-center justify-center opacity-100 lg:opacity-0 group-hover:opacity-100 transition duration-300 z-10">
-                  <Link href={`/movies/${movie.id}`} className="p-2 font-medium rounded-lg bg-white hover:bg-[#B8BBB8]">View Detail</Link>
-                  <button className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Add to Collection</button>
-                </div>
-                <h4 className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-center font-medium line-clamp-2 text-lg overflow-hidden transition duration-300 opacity-100 lg:opacity-0 group-hover:opacity-100 px-4 z-10">
-                  {movie.title}
-                </h4>
-              </div>
-            ))
+              )
+            })
           )}
         </div>
 

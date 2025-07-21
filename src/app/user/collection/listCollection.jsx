@@ -8,65 +8,95 @@ import {
   orderBy,
   doc,
   deleteDoc,
+  getDoc
 } from 'firebase/firestore'
 import getFirebaseConfig from '@/firebase/config'
-import EditCollection from './editCollection'
+import useAuth from '@/hooks/useAuth'
 import Link from 'next/link'
+import EditCollection from './editCollection'
+import AddCollection from './addCollection'
 
 export default function ListCollection() {
+
+  const { user } = useAuth();
+
   const [collections, setCollections] = useState([])
   const [openEdit, setOpenEdit] = useState(false)
   const [selectedCollection, setSelectedCollection] = useState(null)
+  const [openAdd, setOpenAdd] = useState(false);
+  const [movies, setMovies] = useState([]);
 
-  const { db } = getFirebaseConfig()
+  // var userId = user?.uid;
 
   useEffect(() => {
-    const q = query(collection(db, 'collections'), orderBy('createdAt', 'desc'))
+    const { db } = getFirebaseConfig();
+    if(user){
+      const q = query(
+        collection(db, 'users', user.uid, 'collections'),
+        orderBy('createdAt', 'desc')
+      )
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }))
-      setCollections(data)
-    })
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const data = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCollections(data);
+      })
 
-    return () => unsubscribe()
-  }, [db])
-
-  const handleDelete = async (col) => {
-    const confirm = window.confirm(`Are you sure you want to delete "${col.name}"?`)
-    if (!confirm) return
-
-    try {
-      await deleteDoc(doc(db, 'collections', col.id))
-    } catch (error) {
-      console.error('Error deleting collection:', error)
-      alert('Failed to delete collection')
+      return () => unsubscribe();
     }
-  }
+  }, [user]);
 
-  const handleEdit = (col) => {
-    setSelectedCollection(col)
-    setOpenEdit(true)
-  }
+  useEffect(()=>{
+    var movieCovers = [];
+    const fetchMovie = async (movieId) => {
+      const {db} = getFirebaseConfig();
+      const movieRef = collection(db, "movies");
+      const movieDocs = await getDoc(doc(movieRef, movieId));
+      console.log(movieDocs.data());
+      if(movieDocs.exists){
+        movieCovers.push(movieDocs.data());
+      }
+      setMovies(movieCovers);
+    }
+    if(collections.length>0){
+      console.log(collections);
+      collections.map((col) => {
+        console.log(col.movies[0]);
+        fetchMovie(col.movies[0]);
+      });
+    }
+  }, [collections]);
+
+  // Tampilkan loading jika user belum ready
+  if (!user) { return <p className="p-6">Loading user...</p>}
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {collections.length === 0 && (
-          <p className="text-gray-500">No collections found.</p>
-        )}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">My Collections</h1>
+        <button
+          onClick={() => setOpenAdd(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          + Add Collection
+        </button>
+      </div>
 
-        {collections.map((col) => (
+      <AddCollection open={openAdd} setOpen={setOpenAdd} />
+
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {collections.map((col, index) => (
           <div key={col.id} className="p-4 border rounded shadow bg-white relative">
             <Link href={`/user/collection/detail?id=${col.id}`}>
               <div className="cursor-pointer">
                 <img
                   src={
-                    col.movies?.length > 0
-                      ? `/movie-covers/${col.movies[0]}.jpg`
-                      : '/placeholder.jpg'
+                    movies[index]
+                      ? movies[index].coverUrl
+                      : "/assets/images/placeholders/collection.png"
                   }
                   alt={col.name}
                   className="h-40 w-full object-cover rounded mb-2"
@@ -80,13 +110,21 @@ export default function ListCollection() {
 
             <div className="flex justify-between mt-3">
               <button
-                onClick={() => handleEdit(col)}
+                onClick={() => {
+                  setSelectedCollection(col)
+                  setOpenEdit(true)
+                }}
                 className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
               >
                 Edit
               </button>
               <button
-                onClick={() => handleDelete(col)}
+                onClick={async () => {
+                  const { db } = getFirebaseConfig();
+                  const confirm = window.confirm(`Delete "${col.name}"?`)
+                  if (!confirm) return
+                  await deleteDoc(doc(db, 'users', user.uid, 'collections', col.id))
+                }}
                 className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
               >
                 Remove
@@ -96,7 +134,6 @@ export default function ListCollection() {
         ))}
       </div>
 
-      {/* Modal Edit */}
       <EditCollection
         open={openEdit}
         setOpen={setOpenEdit}

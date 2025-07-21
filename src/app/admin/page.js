@@ -1,42 +1,56 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import getFirebaseConfig from "@/firebase/config";
 import { AddMovieForm } from "./_components/add-movie-form";
 import { MoviesTable } from "./_components/movies-table";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { LogoutButton } from "./_components/logout-button";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export default function AdminPage() {
   const [movies, setMovies] = useState([]);
   const [filteredMovies, setFilteredMovies] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const {role} = useAuth();
 
-  useEffect(() => {
-    async function getMovies() {
-      try {
-        const { db } = getFirebaseConfig();
-        const moviesCollection = collection(db, "movies");
-        const q = query(moviesCollection, orderBy("title"));
-        const movieSnapshot = await getDocs(q);
-        const movieList = movieSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setMovies(movieList);
-        setFilteredMovies(movieList);
-      } catch (error) {
-        console.error("Failed to fetch movies:", error);
-      } finally {
-        setIsLoading(false);
-      }
+  const redirect = () => {
+    if(role==="user"){
+      router.push("/");
     }
-    getMovies();
+  }
+
+  useEffect(()=>{
+    redirect();
+  }, [role]);
+
+ 
+  useEffect(() => {
+    const { db } = getFirebaseConfig();
+    const moviesCollection = collection(db, "movies");
+    const q = query(moviesCollection, orderBy("title"));
+
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const movieList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setMovies(movieList);
+      setFilteredMovies(movieList);
+      setIsLoading(false);
+    });
+
+    
+    return () => unsubscribe();
   }, []);
 
+ 
   useEffect(() => {
     const filtered = movies.filter((movie) =>
       movie.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -67,11 +81,11 @@ export default function AdminPage() {
       </div>
 
       {isLoading ? (
-        <p>Loading movies...</p>
+        <p className="text-center py-10">Loading movies...</p>
       ) : filteredMovies.length > 0 ? (
         <MoviesTable movies={filteredMovies} />
       ) : (
-        <p>No movies found.</p>
+        <p className="text-center py-10">No movies found.</p>
       )}
     </main>
   );
