@@ -7,7 +7,8 @@ import {
   query,
   orderBy,
   doc,
-  deleteDoc
+  deleteDoc,
+  getDoc
 } from 'firebase/firestore'
 import getFirebaseConfig from '@/firebase/config'
 import useAuth from '@/hooks/useAuth'
@@ -17,12 +18,13 @@ import AddCollection from './addCollection'
 
 export default function ListCollection() {
 
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
 
   const [collections, setCollections] = useState([])
   const [openEdit, setOpenEdit] = useState(false)
   const [selectedCollection, setSelectedCollection] = useState(null)
-  const [openAdd, setOpenAdd] = useState(false)
+  const [openAdd, setOpenAdd] = useState(false);
+  const [movies, setMovies] = useState([]);
 
   // var userId = user?.uid;
 
@@ -46,6 +48,27 @@ export default function ListCollection() {
     }
   }, [user]);
 
+  useEffect(()=>{
+    var movieCovers = [];
+    const fetchMovie = async (movieId) => {
+      const {db} = getFirebaseConfig();
+      const movieRef = collection(db, "movies");
+      const movieDocs = await getDoc(doc(movieRef, movieId));
+      console.log(movieDocs.data());
+      if(movieDocs.exists){
+        movieCovers.push(movieDocs.data());
+      }
+      setMovies(movieCovers);
+    }
+    if(collections.length>0){
+      console.log(collections);
+      collections.map((col) => {
+        console.log(col.movies[0]);
+        fetchMovie(col.movies[0]);
+      });
+    }
+  }, [collections]);
+
   // Tampilkan loading jika user belum ready
   if (!user) { return <p className="p-6">Loading user...</p>}
 
@@ -63,16 +86,17 @@ export default function ListCollection() {
 
       <AddCollection open={openAdd} setOpen={setOpenAdd} />
 
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {collections.map((col) => (
+        {collections.map((col, index) => (
           <div key={col.id} className="p-4 border rounded shadow bg-white relative">
             <Link href={`/user/collection/detail?id=${col.id}`}>
               <div className="cursor-pointer">
                 <img
                   src={
-                    col.movies?.length > 0
-                      ? `/movie-covers/${col.movies[0]}.jpg`
-                      : '/placeholder.jpg'
+                    movies[index]
+                      ? movies[index].coverUrl
+                      : "/assets/images/placeholders/collection.png"
                   }
                   alt={col.name}
                   className="h-40 w-full object-cover rounded mb-2"
@@ -96,9 +120,10 @@ export default function ListCollection() {
               </button>
               <button
                 onClick={async () => {
+                  const { db } = getFirebaseConfig();
                   const confirm = window.confirm(`Delete "${col.name}"?`)
                   if (!confirm) return
-                  await deleteDoc(doc(db, 'users', userId, 'colection', col.id))
+                  await deleteDoc(doc(db, 'users', user.uid, 'collections', col.id))
                 }}
                 className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
               >

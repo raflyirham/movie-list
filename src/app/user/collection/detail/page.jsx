@@ -26,7 +26,7 @@ export default function CollectionDetailPage() {
       if (!userId || !id) return
 
       try {
-        const ref = doc(db, 'users', userId, 'colection', id)
+        const ref = doc(db, 'users', userId, 'collections', id)
         const snapshot = await getDoc(ref)
         if (snapshot.exists()) {
           setCollection({ id: snapshot.id, ...snapshot.data() })
