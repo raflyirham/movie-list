@@ -30,13 +30,15 @@ import { CheckCircle2Icon, Plus } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import useMovieStore from "@/stores/useMovieStore";
+import useSelectedMoviesStore from "../[id]/_components/useSelectedMoviesStore";
 
 export default function AddToCollectionBulkModal() {
   const { user, isLoading } = useAuth();
   const { db } = getFirebaseConfig();
 
   const { closeModal, openModal } = useModalStore();
-  const movies = useMovieStore((state) => state.movies);
+  const selectedMovies = useSelectedMoviesStore((state) => state.selectedMovies);
+  const clearSelectedMovies = useSelectedMoviesStore((state) => state.clear);
 
   const [isLoadingCollections, setIsLoadingCollections] = useState(true);
   const [movieCollections, setMovieCollections] = useState([]);
@@ -141,9 +143,9 @@ export default function AddToCollectionBulkModal() {
             collection.id
           );
           await Promise.all(
-            movies.map(async (movie) => {
+            selectedMovies.map(async (movieId) => {
               await updateDoc(collectionRef, {
-                movies: arrayUnion(movie.id),
+                movies: arrayUnion(movieId),
               });
             })
           );
@@ -151,6 +153,7 @@ export default function AddToCollectionBulkModal() {
       );
 
       toast.success("Movies added to collections successfully");
+      clearSelectedMovies(); // ✅ kosongkan setelah simpan
       closeModal();
     } catch (error) {
       console.error(error);
