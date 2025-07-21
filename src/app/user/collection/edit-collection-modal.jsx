@@ -21,11 +21,12 @@ import getFirebaseConfig from "@/firebase/config";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { toast } from "sonner";
 
-export default function EditCollectionModal() {
+export default function EditCollectionModal({col}) {
   const { user, isLoading } = useAuth();
   const { closeModal } = useModalStore();
   const { db } = getFirebaseConfig();
 
+  const [isLoadingCollection, setIsLoadingCollection] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [collectionName, setCollectionName] = useState("");
   const [error, setError] = useState("");
