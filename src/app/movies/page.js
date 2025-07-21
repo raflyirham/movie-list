@@ -6,6 +6,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import AddToCollectionButton from "./[id]/_components/add-to-collection-button";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import NotFound from "../not-found";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -16,6 +19,18 @@ export default function MovieList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("title-asc");
   const [currentPage, setCurrentPage] = useState(1);
+  const router = useRouter();
+  const {role} = useAuth();
+
+  const redirect = () => {
+    if(role==="admin"){
+      router.push("/");
+    }
+  }
+
+  useEffect(()=>{
+    redirect();
+  }, [role]);
 
   useEffect(() => {
     let interval;
