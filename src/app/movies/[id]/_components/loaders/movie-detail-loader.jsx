@@ -16,7 +16,7 @@ export default function MovieDetailLoader() {
 
           <Skeleton className="w-full h-[40px] bg-primary/50" />
 
-          <div className="flex flex-row lg:flex-col gap-4 mt-4">
+          <div className="flex flex-row justify-center lg:justify-start items-center lg:items-start lg:flex-col gap-4 mt-4 w-full">
             <Skeleton className="w-[100px] lg:w-full h-[20px] bg-primary/50" />
             <Skeleton className="w-[100px] lg:w-full h-[20px] bg-primary/50" />
             <Skeleton className="w-[100px] lg:w-full h-[20px] bg-primary/50" />

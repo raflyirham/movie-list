@@ -48,6 +48,10 @@ export default function MovieDetailPage() {
 
   useEffect(() => {
     getMovie();
+
+    return () => {
+      setMovie(null);
+    };
   }, []);
 
   if (isLoading) {

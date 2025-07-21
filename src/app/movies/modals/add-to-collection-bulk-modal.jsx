@@ -31,12 +31,12 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import useMovieStore from "@/stores/useMovieStore";
 
-export default function AddToCollectionModal() {
+export default function AddToCollectionBulkModal() {
   const { user, isLoading } = useAuth();
   const { db } = getFirebaseConfig();
 
   const { closeModal, openModal } = useModalStore();
-  const movieId = useMovieStore((state) => state.getMovieId());
+  const movies = useMovieStore((state) => state.movies);
 
   const [isLoadingCollections, setIsLoadingCollections] = useState(true);
   const [movieCollections, setMovieCollections] = useState([]);
@@ -55,13 +55,10 @@ export default function AddToCollectionModal() {
     }
   };
 
-  const isAlreadyInCollection = (collection) => {
-    return collection.movies?.includes(movieId);
-  };
-
   const getCollections = async () => {
     try {
       setIsLoadingCollections(true);
+      console.log("User " + user.uid);
       const userCollectionsRef = collection(
         db,
         "users",
@@ -90,7 +87,6 @@ export default function AddToCollectionModal() {
               movies?.[0]?.coverUrl,
               "/assets/images/placeholders/collection.png"
             ),
-            isAlreadyInCollection: isAlreadyInCollection(collection),
           };
         })
       );
@@ -110,10 +106,6 @@ export default function AddToCollectionModal() {
   };
 
   const handleSelectMovieCollection = (collection) => {
-    if (collection.isAlreadyInCollection) {
-      return;
-    }
-
     if (isCollectionSelected(collection.id)) {
       setSelectedMovieCollections((prev) =>
         prev.filter((c) => c.id !== collection.id)
@@ -139,7 +131,7 @@ export default function AddToCollectionModal() {
     try {
       setIsSubmitting(true);
 
-      Promise.all(
+      await Promise.all(
         selectedMovieCollections.map(async (collection) => {
           const collectionRef = doc(
             db,
@@ -148,16 +140,21 @@ export default function AddToCollectionModal() {
             "collections",
             collection.id
           );
-          await updateDoc(collectionRef, {
-            movies: arrayUnion(movieId),
-          });
+          await Promise.all(
+            movies.map(async (movie) => {
+              await updateDoc(collectionRef, {
+                movies: arrayUnion(movie.id),
+              });
+            })
+          );
         })
       );
 
-      toast.success("Movie added to collections successfully");
+      toast.success("Movies added to collections successfully");
       closeModal();
-    } catch {
-      toast.error("Failed to add movie to collection");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to add movies to collections");
     } finally {
       setIsSubmitting(false);
     }
@@ -246,11 +243,6 @@ export default function AddToCollectionModal() {
                   {isCollectionSelected(collection.id) && (
                     <div className="absolute top-2 right-2 z-10">
                       <Badge>Selected</Badge>
-                    </div>
-                  )}
-                  {collection.isAlreadyInCollection && (
-                    <div className="absolute top-2 right-2 z-10">
-                      <Badge className="bg-green-600">In Collection</Badge>
                     </div>
                   )}
                   <Image

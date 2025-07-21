@@ -17,6 +17,7 @@ import getFirebaseConfig from "@/firebase/config"
 import { createUserWithEmailAndPassword } from "firebase/auth"
 import { doc, setDoc } from "firebase/firestore"
 import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export default function RegisterPage() {
 
@@ -85,7 +86,7 @@ export default function RegisterPage() {
           email: form.email,
           role: "user" // set role as user
         });
-        alert("Registration success! Please login!");
+        toast.success("Successfully registered! Please log in!");
         router.push("/login");
       }).catch((error)=>{
         console.log(error);

@@ -9,12 +9,32 @@ import { LogoutButton } from "./_components/logout-button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
+import { LogoutButton } from "./_components/logout-button";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+
+
 export default function AdminPage() {
   const [movies, setMovies] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+
   const [sortBy, setSortBy] = useState("title");
   const [sortOrder, setSortOrder] = useState("asc");
+
+  const router = useRouter();
+  const {role} = useAuth();
+
+  const redirect = () => {
+    if(role==="user"){
+      router.push("/");
+    }
+  }
+
+  useEffect(()=>{
+    redirect();
+  }, [role]);
+
 
   useEffect(() => {
     async function getMovies() {

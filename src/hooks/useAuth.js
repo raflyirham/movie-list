@@ -12,15 +12,16 @@ export default function useAuth() {
   const [role, setRole] = useState("");
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (currUser) => {
 
-      if (user) {
+      if (currUser) {
         const userCollection = collection(db, "users");
-        const userDoc = await getDoc(doc(userCollection, user.uid));
+        const userDoc = await getDoc(doc(userCollection, currUser.uid));
         setRole(userDoc.data()?.role || "");
+        setUser({...userDoc.data(), uid: currUser.uid});
       }
-
+      console.log(user);
+      
       setIsLoading(false);
     });
 
