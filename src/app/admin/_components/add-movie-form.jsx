@@ -1,7 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
-import { useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef } from "react";
+import { useFormStatus } from "react-dom";
 import { PlusCircle } from "lucide-react";
 import { toast } from "sonner";
 
@@ -31,7 +31,7 @@ function SubmitButton() {
 }
 
 export function AddMovieForm() {
-  const [state, formAction] = useFormState(addMovie, { message: null });
+  const [state, formAction] = useActionState(addMovie, { message: null });
   const formRef = useRef(null);
 
   useEffect(() => {
