@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Layers } from "lucide-react";
-
 import useAuth from "@/hooks/useAuth";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -11,22 +10,16 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import useModalStore from "@/stores/useModalStore";
+import useSelectedMoviesStore from "./useSelectedMoviesStore";
 
 export default function AddToCollectionButton({ type = "single" }) {
   const { user, isLoading } = useAuth();
   const openModal = useModalStore((state) => state.openModal);
+  const { selectedMovies } = useSelectedMoviesStore();
 
   const handleAddToCollection = () => {
-    switch (type) {
-      case "single":
-        openModal("add-to-collection");
-        break;
-      case "bulk":
-        openModal("add-to-collection-bulk");
-        break;
-      default:
-        break;
-    }
+    if (type === "bulk" && selectedMovies.length === 0) return;
+    openModal(type === "single" ? "add-to-collection" : "add-to-collection-bulk");
   };
 
   if (isLoading) return <Skeleton className="bg-primary/50 w-full h-10" />;
@@ -37,7 +30,7 @@ export default function AddToCollectionButton({ type = "single" }) {
         <TooltipTrigger asChild>
           <div>
             <Button disabled className="w-full">
-              <Layers />
+              <Layers className="mr-2" />
               Add to collection
             </Button>
           </div>
@@ -50,9 +43,9 @@ export default function AddToCollectionButton({ type = "single" }) {
   }
 
   return (
-    <Button onClick={handleAddToCollection}>
-      <Layers />
-      Add to collection
+    <Button onClick={handleAddToCollection} disabled={type === "bulk" && selectedMovies.length === 0}>
+      <Layers className="mr-2" />
+      {type === "bulk" ? `Add ${selectedMovies.length} to Collection` : "Add to Collection"}
     </Button>
   );
 }

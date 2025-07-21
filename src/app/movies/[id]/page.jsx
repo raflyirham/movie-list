@@ -87,7 +87,7 @@ export default function MovieDetailPage() {
           </div>
 
           <div className="flex justify-center items-center w-full">
-            <AddToCollectionButton />
+            <AddToCollectionButton type="single" />
           </div>
 
           <div className="flex flex-row lg:flex-col gap-4 mt-4">
