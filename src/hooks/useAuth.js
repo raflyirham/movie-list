@@ -13,12 +13,13 @@ export default function useAuth() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
+      // setUser(user);
 
       if (user) {
         const userCollection = collection(db, "users");
         const userDoc = await getDoc(doc(userCollection, user.uid));
         setRole(userDoc.data()?.role || "");
+        setUser(userDoc.data());
       }
 
       setIsLoading(false);

@@ -132,7 +132,7 @@ export default function MovieList() {
                 </div>
                 <div className="absolute inset-0 bg-black/40 opacity-100 lg:opacity-0 group-hover:opacity-100 transition duration-300"></div>
                 <div className="absolute inset-0 flex flex-col gap-y-4 items-center justify-center opacity-100 lg:opacity-0 group-hover:opacity-100 transition duration-300 z-10">
-                  <Link href="/" className="p-2 font-medium rounded-lg bg-white hover:bg-[#B8BBB8]">View Detail</Link>
+                  <Link href={`/movies/${movie.id}`} className="p-2 font-medium rounded-lg bg-white hover:bg-[#B8BBB8]">View Detail</Link>
                   <button className="p-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Add to Collection</button>
                 </div>
                 <h4 className="absolute bottom-0 left-0 right-0 bg-black/40 text-white text-center font-medium line-clamp-2 text-lg overflow-hidden transition duration-300 opacity-100 lg:opacity-0 group-hover:opacity-100 px-4 z-10">
