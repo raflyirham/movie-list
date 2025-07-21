@@ -72,8 +72,8 @@ export default function MovieDetailPage() {
           quality={100}
         />
       </div>
-      <div className="flex flex-row gap-6 -mt-72 z-20 px-8 py-8">
-        <div className="flex flex-col gap-2">
+      <div className="flex flex-col lg:flex-row gap-6 -mt-72 z-20 px-8 py-8">
+        <div className="flex flex-col items-center lg:items-start gap-4 lg:gap-2">
           <div className="w-[300px] h-[400px] bg-primary rounded-md relative">
             <Image
               src={movie.coverUrl}
@@ -87,7 +87,7 @@ export default function MovieDetailPage() {
           </div>
           <AddToCollectionButton />
 
-          <div className="flex flex-col gap-4 mt-4">
+          <div className="flex flex-row lg:flex-col gap-4 mt-4">
             <p className="text-sm text-secondary-foreground">
               <span className="font-bold">Duration:</span> {movie.duration}{" "}
               minutes
@@ -101,10 +101,12 @@ export default function MovieDetailPage() {
             </p>
           </div>
         </div>
-        <div className="flex flex-col gap-4 mt-42">
-          <h1 className="text-5xl font-bold text-white">{movie.title}</h1>
+        <div className="flex flex-col gap-4 mt-10 lg:mt-42">
+          <h1 className="text-5xl font-bold text-black lg:text-white">
+            {movie.title}
+          </h1>
 
-          <div className="flex flex-col gap-6 mt-12">
+          <div className="flex flex-col gap-6 mt-4 lg:mt-12">
             <div className="flex flex-col gap-4">
               <h2 className="text-2xl font-bold">Description</h2>
               <p className="">{movie.description}</p>

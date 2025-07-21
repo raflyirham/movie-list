@@ -172,7 +172,10 @@ export default function AddToCollectionModal() {
   if (isLoading || isLoadingCollections) {
     return (
       <Dialog open onOpenChange={closeModal}>
-        <DialogContent showCloseButton={false} className="min-w-[800px]">
+        <DialogContent
+          showCloseButton={false}
+          className="md:min-w-[700px] lg:min-w-[800px]"
+        >
           <DialogHeader>
             <DialogTitle asChild>
               <Skeleton className="bg-primary/50 w-[200px] h-5" />
@@ -201,9 +204,12 @@ export default function AddToCollectionModal() {
 
   return (
     <Dialog open onOpenChange={closeModal}>
-      <DialogContent showCloseButton={false} className="min-w-[800px]">
+      <DialogContent
+        showCloseButton={false}
+        className="md:min-w-[700px] lg:min-w-[800px]"
+      >
         <DialogHeader>
-          <div className="flex flex-row justify-between items-center gap-10">
+          <div className="flex flex-col lg:flex-row justify-start lg:justify-between items-start lg:items-center gap-4 lg:gap-10">
             <div className="flex flex-col gap-2">
               <DialogTitle>Add to Collection</DialogTitle>
               <DialogDescription>
@@ -226,7 +232,7 @@ export default function AddToCollectionModal() {
         </p>
 
         <div className="max-h-[400px] overflow-y-auto mt-4">
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {movieCollections.map((collection) => (
               <div
                 key={collection.id}
