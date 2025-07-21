@@ -6,8 +6,8 @@ import { doc, getDoc } from 'firebase/firestore'
 import getFirebaseConfig from '@/firebase/config'
 import useAuth from '@/hooks/useAuth'
 import Link from 'next/link'
-import EditName from './EditName'
-import RemoveMovie from './RemoveMovie'
+// import EditName from './EditName'
+// import RemoveMovie from './RemoveMovie'
 import AddCollection from '../addCollection'
 
 export default function CollectionDetailPage() {
@@ -71,7 +71,7 @@ export default function CollectionDetailPage() {
       <AddCollection open={openAdd} setOpen={setOpenAdd} />
 
       {/* Edit Collection Name */}
-      <EditName collection={collection} setCollection={setCollection} />
+      {/* <EditName collection={collection} setCollection={setCollection} /> */}
 
       <p className="text-gray-600 mt-4 mb-2">
         Total movies: {collection.movies?.length || 0}
@@ -90,11 +90,11 @@ export default function CollectionDetailPage() {
                   />
                 </div>
               </Link>
-              <RemoveMovie
+              {/* <RemoveMovie
                 movieId={movieId}
                 collectionId={collection.id}
                 setCollection={setCollection}
-              />
+              /> */}
             </div>
           ))
         ) : (
